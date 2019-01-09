@@ -5,11 +5,12 @@
     _Color1Ratio("Color 1 Ratio", Range(0,1)) = 0.5
     _ColorAmount("Amount color", Range(0, 5)) = 1.0
     _ColorFreq("Frequency for color", Range(5,100)) = 10.0
+    _ColorEmmision("Color of emmision", Color) = (1,1,1,1)
+    _EmmisionAmount("Amount of emmision", Range(0,1)) = 0.9
     _Amount("Amount", Range(0,0.2)) = 0.01
     _Freq("Frequency", Range(5,20)) = 10.0
     _Speed("Speed of gas flow", Range(0,1)) = 0.1
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
-
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -33,6 +34,8 @@
     float _Color1Ratio;
     float _ColorAmount;
     float _ColorFreq;
+    fixed4 _ColorEmmision;
+    float _EmmisionAmount;
     float _Amount;
     float _Freq;
     float _Speed;
@@ -246,6 +249,7 @@
       float2 F = _ColorAmount * cellular(_ColorFreq*float3(IN.uv_MainTex.x, IN.uv_MainTex.y, _Time.y * _Speed)) + _ColorAmount * 0.5f * cellular(_ColorFreq*2.0f*float3(IN.uv_MainTex.x, IN.uv_MainTex.y, _Time.y * _Speed));
       c.rgb = lerp(c.rgb, _Color2, _Color1Ratio * (F.y - F.x) );
 			o.Albedo = c.rgb;
+      o.Emission = _ColorEmmision * _EmmisionAmount;
 		}
 		ENDCG
 	}

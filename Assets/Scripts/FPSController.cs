@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Controller : MonoBehaviour
+public class FPSController : MonoBehaviour
 {
   //Parameters and veriables
   public float speed = 8.0f;

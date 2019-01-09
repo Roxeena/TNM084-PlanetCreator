@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Rotator : MonoBehaviour {
+public class Orbitor : MonoBehaviour {
 
   public GameObject orbitObject;
 	
   // Use this for initialization
 	void Start () {
-    
-
+  
   }
 
   // Update is called once per frame
