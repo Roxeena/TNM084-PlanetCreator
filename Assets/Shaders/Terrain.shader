@@ -1,6 +1,11 @@
 ﻿Shader "Custom/Terrain" {
 	Properties {
-		_Color ("Color", Color) = (1,1,1,1)
+		_LandColor1 ("Color of land 1", Color) = (0, 1, 0, 1)
+    _LandColor2("Color of land 2", Color) = (0.5, 0.5, 0.5, 1)
+    _Color1Ratio("Amount of land color 1", Range(0,1)) = 0.5
+    _ColorFreq("Frequency of land color noise", Range(0,20)) = 5.0
+    _MountColor ("Color of mountains", Color) = (1, 1, 1, 1)
+    _BeachColor ("Color of beaches", Color) = (1, 1, 0, 1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
     _Amount("Amount", Range(0,1)) = 0.5
     _Freq("Frequency", Range(0,5)) = 2.0
@@ -23,12 +28,15 @@
       float4 vertex;
 		};
 
-		half _Glossiness;
-		half _Metallic;
-		fixed4 _Color;
+		fixed4 _LandColor1;
+    fixed4 _LandColor2;
+    float _Color1Ratio;
+    float _ColorFreq;
+    fixed4 _MountColor;
+    fixed4 _BeachColor;
     float _Amount;
     float _Freq;
-
+    
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
 		// #pragma instancing_options assumeuniformscaling
@@ -141,13 +149,16 @@
 
 		void surf (Input IN, inout SurfaceOutput o) {
 			// Albedo comes from a texture tinted by color
-      fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+      float4 c = _LandColor1;
+      float3 temp = float3(IN.uv_MainTex.x, IN.uv_MainTex.y, 1.0f);
+      c.rgb = lerp(c.rgb, _LandColor2.rgb, _Color1Ratio * snoise(_ColorFreq * temp) + _Color1Ratio * 0.5f * snoise(_ColorFreq * 2.0f * temp));
+      
       o.Albedo = c.rgb;
 
       //Height map colors
-      float dis2Center = sqrt(IN.vertex.x*IN.vertex.x + IN.vertex.y*IN.vertex.y + IN.vertex.z*IN.vertex.z);
+      /*float dis2Center = sqrt(IN.vertex.x*IN.vertex.x + IN.vertex.y*IN.vertex.y + IN.vertex.z*IN.vertex.z);
       if (dis2Center == 1.0f)
-        o.Albedo.rgb = IN.vertex.xyz;
+        ;*/
 		}
 		ENDCG
 	}

@@ -1,8 +1,10 @@
 ﻿Shader "Custom/Water" {
 	Properties {
-		_Color ("Color", Color) = (1,1,1,1)
+		_WaterColor ("Color of the water", Color) = (0,0,1,1)
+    _WaveColor("Color of the waves od the water", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
     _Amount("Amount", Range(0,0.2)) = 0.01
+    _WaveAmount("Amount of wave color", Range(0,1)) = 0.5
     _Freq("Frequency", Range(5,20)) = 10.0
     _WaterSpeed("Speed of the water", Range(0,1)) = 0.2
 	}
@@ -23,8 +25,10 @@
 			float2 uv_MainTex;
 		};
 
-		fixed4 _Color;
+		fixed4 _WaterColor;
+    fixed4 _WaveColor;
     float _Amount;
+    float _WaveAmount;
     float _Freq;
     float _WaterSpeed;
 
@@ -131,15 +135,19 @@
     void vert(inout appdata_full v) {
       if (_Amount > 0.001f && _Freq > 0.01f)
       {
-        v.vertex.x += (_Amount * sin(_Freq * v.vertex.x * _Time * _WaterSpeed) + 0.5f * _Amount * snoise(_Freq * 2.0f * v.vertex.x * _Time * _WaterSpeed));
-        v.vertex.y += (_Amount * sin(_Freq * v.vertex.y * _Time * _WaterSpeed) + 0.5f * _Amount * snoise(_Freq * 2.0f * v.vertex.y * _Time * _WaterSpeed));
-        v.vertex.z += (_Amount * sin(_Freq * v.vertex.z * _Time * _WaterSpeed) + 0.5f * _Amount * snoise(_Freq * 2.0f * v.vertex.z * _Time * _WaterSpeed));
+        v.vertex.x += (_Amount * sin(_Freq * v.vertex.x * _Time.y * _WaterSpeed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.x * _Time.y * _WaterSpeed));
+        v.vertex.y += (_Amount * sin(_Freq * v.vertex.y * _Time.y * _WaterSpeed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.y * _Time.y * _WaterSpeed));
+        v.vertex.z += (_Amount * sin(_Freq * v.vertex.z * _Time.y * _WaterSpeed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.z * _Time.y * _WaterSpeed));
       }
     }
 
 		void surf (Input IN, inout SurfaceOutput o) {
 			// Albedo comes from a texture tinted by color
-			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+			//fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _WaterColor;
+      float4 c = _WaterColor; 
+      float3 temp = float3(IN.uv_MainTex.x, IN.uv_MainTex.y, _Time.y * _WaterSpeed);
+      c.rgb = lerp(c.rgb, _WaveColor.rgb, _WaveAmount * snoise(_Freq * temp));
+
 			o.Albedo = c.rgb;
 		}
 		ENDCG
