@@ -10,7 +10,7 @@ public class ControllSun : MonoBehaviour {
   //Renderer of the sun
   private Renderer render;
 
-  //Values that can be changed in the terrain shader
+  //Values that can be changed in the shader
   /*************************************/
   [Range(0.0f, 0.2f)]
   public float amount = 0.01f;

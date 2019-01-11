@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class ControllTerrain : MonoBehaviour {
@@ -10,7 +11,7 @@ public class ControllTerrain : MonoBehaviour {
   //Renderer of the sun
   private Renderer render;
 
-  //Values that can be changed in the terrain shader
+  //Values that can be changed in the shader
   /*************************************/
   [Range(0.0f, 1.0f)]
   public float terrainAmount = 0.4f;
@@ -31,6 +32,14 @@ public class ControllTerrain : MonoBehaviour {
   public float landColorFreq = 5.0f;
   /**************************************/
 
+  // ---- UI ---
+  /**************************************/
+  public Slider amountSlider;
+  public Slider freqSlider;
+  public Slider colorRatioSlider;
+  public Slider landFreqSlider;
+  /**************************************/
+
   // Use this for initialization
   void Start () {
 
@@ -47,12 +56,22 @@ public class ControllTerrain : MonoBehaviour {
     mountain = render.material.GetColor("_MountColor");
     beach = render.material.GetColor("_BeachColor");
     landColorFreq = render.material.GetFloat("_ColorFreq");
+
+    amountSlider.value = terrainAmount;
+    freqSlider.value = terrainFreq;
+    colorRatioSlider.value = color1Ratio;
+    landFreqSlider.value = landColorFreq;
   }
 	
 	// Update is called once per frame
 	void Update () {
 
     if (!planet) return;
+
+    terrainAmount = amountSlider.value;
+    terrainFreq = freqSlider.value;
+    color1Ratio = colorRatioSlider.value;
+    landColorFreq = landFreqSlider.value;
 
     render.material.SetFloat("_Amount", terrainAmount);
     render.material.SetFloat("_Freq", terrainFreq);

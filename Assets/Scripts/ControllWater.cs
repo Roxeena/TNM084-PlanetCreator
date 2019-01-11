@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class ControllWater : MonoBehaviour {
@@ -10,7 +11,7 @@ public class ControllWater : MonoBehaviour {
   //Renderer of the sun
   private Renderer render;
 
-  //Values that can be changed in the terrain shader
+  //Values that can be changed in the shader
   /*************************************/
   [Range(0.0f, 0.2f)]
   public float waterAmount = 0.01f;
@@ -28,6 +29,14 @@ public class ControllWater : MonoBehaviour {
   public float waterSpeed = 0.2f;
   /**************************************/
 
+  // ---- UI ---
+  /**************************************/
+  public Slider amountSlider;
+  public Slider freqSlider;
+  public Slider waveAmountSlider;
+  public Slider speedSlider;
+  /**************************************/
+
   // Use this for initialization
   void Start () {
 
@@ -42,12 +51,22 @@ public class ControllWater : MonoBehaviour {
     wave = render.material.GetColor("_WaveColor");
     waveAmount = render.material.GetFloat("_WaveAmount");
     waterSpeed = render.material.GetFloat("_WaterSpeed");
+
+    amountSlider.value = waterAmount;
+    freqSlider.value = waterFreq;
+    waveAmountSlider.value = waveAmount;
+    speedSlider.value = waterSpeed;
   }
 	
 	// Update is called once per frame
 	void Update () {
 
     if (!planet) return;
+
+    waterAmount = amountSlider.value;
+    waterFreq = freqSlider.value;
+    waveAmount = waveAmountSlider.value;
+    waterSpeed = speedSlider.value;
 
     render.material.SetFloat("_Amount", waterAmount);
     render.material.SetFloat("_Freq", waterFreq);
