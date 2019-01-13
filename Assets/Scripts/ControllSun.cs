@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class ControllSun : MonoBehaviour {
@@ -12,7 +13,7 @@ public class ControllSun : MonoBehaviour {
 
   //Values that can be changed in the shader
   /*************************************/
-  [Range(0.0f, 0.2f)]
+  [Range(0.0f, 0.05f)]
   public float amount = 0.01f;
 
   [Range(5.0f, 20.0f)]
@@ -39,6 +40,17 @@ public class ControllSun : MonoBehaviour {
   public float gasSpeed = 0.1f;
   /**************************************/
 
+  // ---- UI ---
+  /**************************************/
+  public Slider amountSlider;
+  public Slider freqSlider;
+  public Slider colorAmountSlider;
+  public Slider colorFreqSlider;
+  public Slider baseColorRatioSlider;
+  public Slider emmisionAmountSlider;
+  public Slider speedSlider;
+  /**************************************/
+
   // Use this for initialization
   void Start () {
 
@@ -57,12 +69,28 @@ public class ControllSun : MonoBehaviour {
     emmision = render.material.GetColor("_ColorEmmision");
     emmisionAmount = render.material.GetFloat("_EmmisionAmount");
     gasSpeed = render.material.GetFloat("_Speed");
+
+    amountSlider.value = amount;
+    freqSlider.value = freq;
+    colorAmountSlider.value = colorAmount;
+    colorFreqSlider.value = colorFreq;
+    baseColorRatioSlider.value = baseColorRatio;
+    emmisionAmountSlider.value = emmisionAmount;
+    speedSlider.value = gasSpeed;
   }
 	
 	// Update is called once per frame
 	void Update () {
 
     if (!sun) return;
+
+    amount = amountSlider.value;
+    freq = freqSlider.value;
+    colorAmount = colorAmountSlider.value;
+    colorFreq = colorFreqSlider.value;
+    baseColorRatio = baseColorRatioSlider.value;
+    emmisionAmount = emmisionAmountSlider.value;
+    gasSpeed = speedSlider.value;
 
     render.material.SetFloat("_Amount", amount);
     render.material.SetFloat("_Freq", freq);
