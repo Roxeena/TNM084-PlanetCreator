@@ -25,12 +25,13 @@ public class ControllWater : MonoBehaviour {
   [Range(0.0f, 1.0f)]
   public float waveAmount = 0.5f;
 
-  [Range(0.0f, 1.0f)]
+  [Range(0.0f, 0.2f)]
   public float waterSpeed = 0.2f;
   /**************************************/
 
   // ---- UI ---
   /**************************************/
+  public Slider sizeSlider;
   public Slider amountSlider;
   public Slider freqSlider;
   public Slider waveAmountSlider;
@@ -52,6 +53,7 @@ public class ControllWater : MonoBehaviour {
     waveAmount = render.material.GetFloat("_WaveAmount");
     waterSpeed = render.material.GetFloat("_WaterSpeed");
 
+    sizeSlider.value = planet.GetComponent<Transform>().localScale.x;
     amountSlider.value = waterAmount;
     freqSlider.value = waterFreq;
     waveAmountSlider.value = waveAmount;
@@ -63,11 +65,13 @@ public class ControllWater : MonoBehaviour {
 
     if (!planet) return;
 
+    float newSize = sizeSlider.value;
     waterAmount = amountSlider.value;
     waterFreq = freqSlider.value;
     waveAmount = waveAmountSlider.value;
     waterSpeed = speedSlider.value;
 
+    planet.GetComponent<Transform>().localScale = new Vector3(newSize, newSize, newSize);
     render.material.SetFloat("_Amount", waterAmount);
     render.material.SetFloat("_Freq", waterFreq);
     render.material.SetColor("_WaterColor", water);

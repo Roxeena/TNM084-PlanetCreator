@@ -7,9 +7,9 @@
     _ColorFreq("Frequency for color", Range(5,100)) = 10.0
     _ColorEmmision("Color of emmision", Color) = (1,1,1,1)
     _EmmisionAmount("Amount of emmision", Range(0,1)) = 0.9
-    _Amount("Amount", Range(0,0.2)) = 0.01
-    _Freq("Frequency", Range(5,20)) = 10.0
-    _Speed("Speed of gas flow", Range(0,1)) = 0.1
+    _Amount("Amount", Range(0,0.05)) = 0.01
+    _Freq("Frequency", Range(20,100)) = 10.0
+    _Speed("Speed of gas flow", Range(0,0.2)) = 0.1
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
 	}
 	SubShader {
@@ -238,9 +238,9 @@
     void vert(inout appdata_full v) {
       if (_Amount > 0.001f && _Freq > 0.01f)
       {
-        v.vertex.x += (_Amount * sin(_Freq * v.vertex.x * _Time.y * _Speed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.x * _Time.y * _Speed));
-        v.vertex.y += (_Amount * sin(_Freq * v.vertex.y * _Time.y * _Speed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.y * _Time.y * _Speed));
-        v.vertex.z += (_Amount * sin(_Freq * v.vertex.z * _Time.y * _Speed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.z * _Time.y * _Speed));
+        v.vertex.x += (_Amount * sin(_Freq * v.vertex.x * _Time.y * _Speed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.x * _Time.y * _Speed) + 0.25f * _Amount * sin(_Freq * 4.0f * v.vertex.x * _Time.y * _Speed));
+        v.vertex.y += (_Amount * sin(_Freq * v.vertex.y * _Time.y * _Speed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.y * _Time.y * _Speed) + 0.25f * _Amount * sin(_Freq * 4.0f * v.vertex.x * _Time.y * _Speed));
+        v.vertex.z += (_Amount * sin(_Freq * v.vertex.z * _Time.y * _Speed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.z * _Time.y * _Speed) + 0.25f * _Amount * sin(_Freq * 4.0f * v.vertex.x * _Time.y * _Speed));
       }
     }
 

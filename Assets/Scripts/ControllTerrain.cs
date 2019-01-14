@@ -34,6 +34,7 @@ public class ControllTerrain : MonoBehaviour {
 
   // ---- UI ---
   /**************************************/
+  public Slider sizeSlider;
   public Slider amountSlider;
   public Slider freqSlider;
   public Slider colorRatioSlider;
@@ -57,6 +58,7 @@ public class ControllTerrain : MonoBehaviour {
     beach = render.material.GetColor("_BeachColor");
     landColorFreq = render.material.GetFloat("_ColorFreq");
 
+    sizeSlider.value = planet.GetComponent<Transform>().localScale.x;
     amountSlider.value = terrainAmount;
     freqSlider.value = terrainFreq;
     colorRatioSlider.value = color1Ratio;
@@ -68,11 +70,13 @@ public class ControllTerrain : MonoBehaviour {
 
     if (!planet) return;
 
+    float newSize = sizeSlider.value;
     terrainAmount = amountSlider.value;
     terrainFreq = freqSlider.value;
     color1Ratio = colorRatioSlider.value;
     landColorFreq = landFreqSlider.value;
 
+    planet.GetComponent<Transform>().localScale = new Vector3(newSize, newSize, newSize);
     render.material.SetFloat("_Amount", terrainAmount);
     render.material.SetFloat("_Freq", terrainFreq);
     render.material.SetColor("_LandColor1", land1);

@@ -55,14 +55,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Amount: 0.19
+    - _Amount: 0.08
     - _BumpScale: 1
-    - _Color1Ratio: 0.28
-    - _ColorFreq: 18.4
+    - _Color1Ratio: 0.31
+    - _ColorFreq: 12.1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _Freq: 2.19
+    - _Freq: 1.98
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -83,5 +83,5 @@ Material:
     - _LandColor1: {r: 0.1144572, g: 0.53676474, b: 0.1144572, a: 1}
     - _LandColor11: {r: 0, g: 1, b: 0, a: 1}
     - _LandColor12: {r: 1, g: 0.841785, b: 0.5588235, a: 1}
-    - _LandColor2: {r: 0.3897059, g: 0.31646806, b: 0.07736809, a: 1}
+    - _LandColor2: {r: 0.35294116, g: 0.35294116, b: 0.35294116, a: 1}
     - _MountColor: {r: 1, g: 1, b: 1, a: 1}

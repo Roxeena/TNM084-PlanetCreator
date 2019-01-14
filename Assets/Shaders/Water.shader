@@ -3,10 +3,10 @@
 		_WaterColor ("Color of the water", Color) = (0,0,1,1)
     _WaveColor("Color of the waves od the water", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
-    _Amount("Amount", Range(0,0.2)) = 0.01
+    _Amount("Amount", Range(0,0.05)) = 0.01
     _WaveAmount("Amount of wave color", Range(0,1)) = 0.5
-    _Freq("Frequency", Range(5,20)) = 10.0
-    _WaterSpeed("Speed of the water", Range(0,1)) = 0.2
+    _Freq("Frequency", Range(20,100)) = 10.0
+    _WaterSpeed("Speed of the water", Range(0,0.2)) = 0.1
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -135,9 +135,9 @@
     void vert(inout appdata_full v) {
       if (_Amount > 0.001f && _Freq > 0.01f)
       {
-        v.vertex.x += (_Amount * sin(_Freq * v.vertex.x * _Time.y * _WaterSpeed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.x * _Time.y * _WaterSpeed));
-        v.vertex.y += (_Amount * sin(_Freq * v.vertex.y * _Time.y * _WaterSpeed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.y * _Time.y * _WaterSpeed));
-        v.vertex.z += (_Amount * sin(_Freq * v.vertex.z * _Time.y * _WaterSpeed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.z * _Time.y * _WaterSpeed));
+        v.vertex.x += (_Amount * sin(_Freq * v.vertex.x * _Time.y * _WaterSpeed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.x * _Time.y * _WaterSpeed) + 0.25f * _Amount * sin(_Freq * 4.0f * v.vertex.x * _Time.y * _WaterSpeed));
+        v.vertex.y += (_Amount * sin(_Freq * v.vertex.y * _Time.y * _WaterSpeed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.y * _Time.y * _WaterSpeed) + 0.25f * _Amount * sin(_Freq * 4.0f * v.vertex.x * _Time.y * _WaterSpeed));
+        v.vertex.z += (_Amount * sin(_Freq * v.vertex.z * _Time.y * _WaterSpeed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.z * _Time.y * _WaterSpeed) + 0.25f * _Amount * sin(_Freq * 4.0f * v.vertex.x * _Time.y * _WaterSpeed));
       }
     }
 

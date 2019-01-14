@@ -36,7 +36,7 @@ public class ControllSun : MonoBehaviour {
   [Range(0.0f, 1.0f)]
   public float emmisionAmount = 0.9f;
 
-  [Range(0.0f, 1.0f)]
+  [Range(0.0f, 0.2f)]
   public float gasSpeed = 0.1f;
   /**************************************/
 
