@@ -3,10 +3,11 @@
 		_WaterColor ("Color of the water", Color) = (0,0,1,1)
     _WaveColor("Color of the waves od the water", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
-    _Amount("Amount", Range(0,0.05)) = 0.01
     _WaveAmount("Amount of wave color", Range(0,1)) = 0.5
-    _Freq("Frequency", Range(20,100)) = 10.0
+    _WaveFreq("Frequency of waves", Range(1.0, 50.0)) = 20.0
     _WaterSpeed("Speed of the water", Range(0,0.2)) = 0.1
+    _Glossiness("Smoothness", Range(0.6,0.8)) = 0.75
+    _Metallic("Metallic", Range(0.2,0.4)) = 0.3
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -14,7 +15,7 @@
 
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Lambert vertex:vert
+    #pragma surface surf Standard fullforwardshadows
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
@@ -27,10 +28,11 @@
 
 		fixed4 _WaterColor;
     fixed4 _WaveColor;
-    float _Amount;
     float _WaveAmount;
-    float _Freq;
+    float _WaveFreq;
     float _WaterSpeed;
+    float _Glossiness = 0.75f;
+    float _Metallic = 0.3;
 
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -39,6 +41,18 @@
 			// put more per-instance properties here
 		UNITY_INSTANCING_BUFFER_END(Props)
 
+    /*************************************************************************/
+    //
+    // Description : Array and textureless GLSL 2D/3D/4D simplex 
+    //               noise functions. (Translated to HLSL by Malin Ejdbo 2019-01-20)
+    //      Author : Ian McEwan, Ashima Arts.
+    //  Maintainer : stegu
+    //     Lastmod : 20110822 (ijm)
+    //     License : Copyright (C) 2011 Ashima Arts. All rights reserved.
+    //               Distributed under the MIT License. See LICENSE file.
+    //               https://github.com/ashima/webgl-noise
+    //               https://github.com/stegu/webgl-noise
+    // 
     float3 mod289(float3 x) {
       return x - floor(x * (1.0 / 289.0)) * 289.0;
     }
@@ -130,24 +144,14 @@
       return 42.0 * dot(m*m, float4(dot(p0, x0), dot(p1, x1),
         dot(p2, x2), dot(p3, x3)));
     }
+    /***************************************************************************/
 
-
-    void vert(inout appdata_full v) {
-      if (_Amount > 0.001f && _Freq > 0.01f)
-      {
-        v.vertex.x += (_Amount * sin(_Freq * v.vertex.x * _Time.y * _WaterSpeed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.x * _Time.y * _WaterSpeed) + 0.25f * _Amount * sin(_Freq * 4.0f * v.vertex.x * _Time.y * _WaterSpeed));
-        v.vertex.y += (_Amount * sin(_Freq * v.vertex.y * _Time.y * _WaterSpeed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.y * _Time.y * _WaterSpeed) + 0.25f * _Amount * sin(_Freq * 4.0f * v.vertex.x * _Time.y * _WaterSpeed));
-        v.vertex.z += (_Amount * sin(_Freq * v.vertex.z * _Time.y * _WaterSpeed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.z * _Time.y * _WaterSpeed) + 0.25f * _Amount * sin(_Freq * 4.0f * v.vertex.x * _Time.y * _WaterSpeed));
-      }
-    }
-
-		void surf (Input IN, inout SurfaceOutput o) {
-			// Albedo comes from a texture tinted by color
-			//fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _WaterColor;
+		void surf (Input IN, inout SurfaceOutputStandard o) {
       float4 c = _WaterColor; 
-      float3 temp = float3(IN.uv_MainTex.x, IN.uv_MainTex.y, _Time.y * _WaterSpeed);
-      c.rgb = lerp(c.rgb, _WaveColor.rgb, _WaveAmount * snoise(_Freq * temp));
-
+      float3 temp = float3(IN.uv_MainTex.x, 2.0f*IN.uv_MainTex.y, _Time.y * _WaterSpeed);
+      c.rgb = lerp(c.rgb, _WaveColor.rgb, _WaveAmount * snoise(_WaveFreq * temp));
+      o.Metallic = _Metallic;
+      o.Smoothness = _Glossiness;
 			o.Albedo = c.rgb;
 		}
 		ENDCG

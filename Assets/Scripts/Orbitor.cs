@@ -1,16 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Orbitor : MonoBehaviour {
 
   public GameObject orbitObject;
 
   private bool stop = false;
-  // Use this for initialization
-	void Start () {
-  
-  }
 
   // Update is called once per frame
   void Update () {

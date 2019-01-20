@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 using UnityEngine;
 
 public class ControllSun : MonoBehaviour {
 
-  //Planet to controll parameters of
+  //Object to controll parameters of
   public GameObject sun;
 
   //Renderer of the sun
@@ -13,12 +11,6 @@ public class ControllSun : MonoBehaviour {
 
   //Values that can be changed in the shader
   /*************************************/
-  [Range(0.0f, 0.05f)]
-  public float amount = 0.01f;
-
-  [Range(5.0f, 20.0f)]
-  public float freq = 10.0f;
-
   public Color baseColor = Color.yellow;
   public Color spotsColor = Color.red;
 
@@ -42,16 +34,27 @@ public class ControllSun : MonoBehaviour {
 
   // ---- UI ---
   /**************************************/
-  public Slider amountSlider;
-  public Slider freqSlider;
   public Slider colorAmountSlider;
   public Slider colorFreqSlider;
   public Slider baseColorRatioSlider;
   public Slider emmisionAmountSlider;
   public Slider speedSlider;
+
+  //Colors
+  public Slider baseColorSliderR;
+  public Slider baseColorSliderG;
+  public Slider baseColorSliderB;
+
+  public Slider spotColorSliderR;
+  public Slider spotColorSliderG;
+  public Slider spotColorSliderB;
+
+  public Slider emisionColorSliderR;
+  public Slider emisionColorSliderG;
+  public Slider emisionColorSliderB;
   /**************************************/
 
-  // Use this for initialization
+  // Used for initialization
   void Start () {
 
     if (!sun) return;
@@ -59,8 +62,7 @@ public class ControllSun : MonoBehaviour {
     render = sun.GetComponent<Renderer>();
     render.material.shader = Shader.Find("Custom/Sun");
 
-    amount = render.material.GetFloat("_Amount");
-    freq = render.material.GetFloat("_Freq");
+    //Get current values in shader
     baseColor = render.material.GetColor("_Color1");
     spotsColor = render.material.GetColor("_Color2");
     colorAmount = render.material.GetFloat("_ColorAmount");
@@ -70,30 +72,53 @@ public class ControllSun : MonoBehaviour {
     emmisionAmount = render.material.GetFloat("_EmmisionAmount");
     gasSpeed = render.material.GetFloat("_Speed");
 
-    amountSlider.value = amount;
-    freqSlider.value = freq;
+    //Set sliders to theses values
     colorAmountSlider.value = colorAmount;
     colorFreqSlider.value = colorFreq;
     baseColorRatioSlider.value = baseColorRatio;
     emmisionAmountSlider.value = emmisionAmount;
     speedSlider.value = gasSpeed;
+
+    //Color sliders
+    baseColorSliderR.value = baseColor.r;
+    baseColorSliderG.value = baseColor.g;
+    baseColorSliderB.value = baseColor.b;
+
+    spotColorSliderR.value = spotsColor.r;
+    spotColorSliderG.value = spotsColor.g;
+    spotColorSliderB.value = spotsColor.b;
+
+    emisionColorSliderR.value = emmision.r;
+    emisionColorSliderG.value = emmision.g;
+    emisionColorSliderB.value = emmision.b;
   }
-	
-	// Update is called once per frame
-	void Update () {
+
+  // Update is called once per frame
+  void Update () {
 
     if (!sun) return;
 
-    amount = amountSlider.value;
-    freq = freqSlider.value;
+    //Get new value in slider
     colorAmount = colorAmountSlider.value;
     colorFreq = colorFreqSlider.value;
     baseColorRatio = baseColorRatioSlider.value;
     emmisionAmount = emmisionAmountSlider.value;
     gasSpeed = speedSlider.value;
 
-    render.material.SetFloat("_Amount", amount);
-    render.material.SetFloat("_Freq", freq);
+    //Color sliders
+    baseColor.r = baseColorSliderR.value;
+    baseColor.g = baseColorSliderG.value;
+    baseColor.b = baseColorSliderB.value;
+
+    spotsColor.r = spotColorSliderR.value;
+    spotsColor.g = spotColorSliderG.value;
+    spotsColor.b = spotColorSliderB.value;
+
+    emmision.r = emisionColorSliderR.value;
+    emmision.g = emisionColorSliderG.value;
+    emmision.b = emisionColorSliderB.value;
+
+    //Apply the slider values to the parameters in the shader
     render.material.SetColor("_Color1", baseColor);
     render.material.SetColor("_Color2", spotsColor);
     render.material.SetFloat("_ColorAmount", colorAmount);

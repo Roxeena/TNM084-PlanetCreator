@@ -2,7 +2,7 @@
 
 public class FPSController : MonoBehaviour
 {
-  //Parameters and veriables
+  //Parameters and variables
   public float speed = 8.0f;
   public float sensitivity = 3.0f;
   public float flightSpeed = 3.0f;
@@ -12,7 +12,7 @@ public class FPSController : MonoBehaviour
   private Camera cam;
   private bool stop = false;
 
-  // Use this for initialization
+  // Used for initialization
   void Start()
   {
     cam = Camera.main;

@@ -5,7 +5,9 @@
     _Color1Ratio("Amount of land color 1", Range(0,1)) = 0.5
     _ColorFreq("Frequency of land color noise", Range(0,20)) = 5.0
     _MountColor ("Color of mountains", Color) = (1, 1, 1, 1)
+    _MountHeight("Height of mountains", Range(0.8,2)) = 1.0
     _BeachColor ("Color of beaches", Color) = (1, 1, 0, 1)
+    _BecahHeigth("Height of beaches", Range(0.8,2)) = 0.98
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
     _Amount("Amount", Range(0,1)) = 0.5
     _Freq("Frequency", Range(0,5)) = 2.0
@@ -25,7 +27,7 @@
 
 		struct Input {
 			float2 uv_MainTex;
-      float4 vertex;
+      float3 worldPos;
 		};
 
 		fixed4 _LandColor1;
@@ -33,7 +35,9 @@
     float _Color1Ratio;
     float _ColorFreq;
     fixed4 _MountColor;
+    float _MountHeight;
     fixed4 _BeachColor;
+    float _BecahHeigth;
     float _Amount;
     float _Freq;
     
@@ -44,7 +48,18 @@
 			// put more per-instance properties here
 		UNITY_INSTANCING_BUFFER_END(Props)
     
-
+    /*************************************************************************/
+    //
+    // Description : Array and textureless GLSL 2D/3D/4D simplex 
+    //               noise functions. (Translated to HLSL by Malin Ejdbo 2019-01-20)
+    //      Author : Ian McEwan, Ashima Arts.
+    //  Maintainer : stegu
+    //     Lastmod : 20110822 (ijm)
+    //     License : Copyright (C) 2011 Ashima Arts. All rights reserved.
+    //               Distributed under the MIT License. See LICENSE file.
+    //               https://github.com/ashima/webgl-noise
+    //               https://github.com/stegu/webgl-noise
+    // 
     float3 mod289(float3 x) {
       return x - floor(x * (1.0 / 289.0)) * 289.0;
     }
@@ -136,7 +151,7 @@
       return 42.0 * dot(m*m, float4(dot(p0, x0), dot(p1, x1),
         dot(p2, x2), dot(p3, x3)));
     }
-
+    /***************************************************************************/
 
     void vert(inout appdata_full v) {
       _Amount *= 0.5f;
@@ -148,17 +163,25 @@
     }
 
 		void surf (Input IN, inout SurfaceOutput o) {
-			// Albedo comes from a texture tinted by color
       float4 c = _LandColor1;
-      float3 temp = float3(IN.uv_MainTex.x, IN.uv_MainTex.y, 1.0f);
-      c.rgb = lerp(c.rgb, _LandColor2.rgb, _Color1Ratio * snoise(_ColorFreq * temp) + _Color1Ratio * 0.5f * snoise(_ColorFreq * 2.0f * temp));
-      
-      o.Albedo = c.rgb;
+      float3 currPos = float3(IN.uv_MainTex.x, IN.uv_MainTex.y, 1.0);
+      c.rgb = lerp(c.rgb, _LandColor2.rgb, _Color1Ratio * snoise(_ColorFreq * currPos) + _Color1Ratio * 0.5f * snoise(_ColorFreq * 2.0f * currPos));
 
       //Height map colors
-      /*float dis2Center = sqrt(IN.vertex.x*IN.vertex.x + IN.vertex.y*IN.vertex.y + IN.vertex.z*IN.vertex.z);
-      if (dis2Center == 1.0f)
-        ;*/
+      float noiseMountain = 0.01*snoise(_ColorFreq * 3.0f * currPos) - 0.005;
+      float noiseBeach = 0.005*snoise(_ColorFreq * 2.0f * currPos) - 0.00075 + 0.005*0.5*snoise(_ColorFreq * 3.0f * currPos) - 0.00075*0.5;
+      
+      float dis2Center = sqrt(IN.worldPos.x*IN.worldPos.x + (IN.worldPos.y - 0.8)*(IN.worldPos.y - 0.8) + IN.worldPos.z*IN.worldPos.z);
+      if ((dis2Center + noiseMountain) > _MountHeight)
+      {
+        c.rgb = lerp(c.rgb, _MountColor.rgb, dis2Center);
+      }
+      else if ((dis2Center + noiseBeach) < (_BecahHeigth - 0.001))
+      {
+        c.rgb = lerp(c.rgb, _BeachColor.rgb, dis2Center);
+        //c.rgb = float3(_BecahHeigth, _BecahHeigth, _BecahHeigth);
+      }
+      o.Albedo = c.rgb;
 		}
 		ENDCG
 	}

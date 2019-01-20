@@ -62,9 +62,9 @@ Material:
     - _DstBlend: 0
     - _Freq: 10
     - _GlossMapScale: 1
-    - _Glossiness: 0.27
+    - _Glossiness: 0.75
     - _GlossyReflections: 1
-    - _Metallic: 0.91
+    - _Metallic: 0.3
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
@@ -74,7 +74,8 @@ Material:
     - _Time: 0
     - _UVSec: 0
     - _WaterSpeed: 0.01
-    - _WaveAmount: 0.24
+    - _WaveAmount: 0.2
+    - _WaveFreq: 7.2
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.3122297, g: 0.54372996, b: 0.77205884, a: 1}

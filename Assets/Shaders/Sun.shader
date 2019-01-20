@@ -3,12 +3,10 @@
     _Color1("Color 1", Color) = (1, 1, 0, 1)
     _Color2("Color 2", Color) = (1, 0, 0, 1)
     _Color1Ratio("Color 1 Ratio", Range(0,1)) = 0.5
-    _ColorAmount("Amount color", Range(0, 5)) = 1.0
+    _ColorAmount("Amount color", Range(0, 1)) = 1.0
     _ColorFreq("Frequency for color", Range(5,100)) = 10.0
     _ColorEmmision("Color of emmision", Color) = (1,1,1,1)
     _EmmisionAmount("Amount of emmision", Range(0,1)) = 0.9
-    _Amount("Amount", Range(0,0.05)) = 0.01
-    _Freq("Frequency", Range(20,100)) = 10.0
     _Speed("Speed of gas flow", Range(0,0.2)) = 0.1
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
 	}
@@ -18,7 +16,7 @@
 
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Lambert vertex:vert
+    #pragma surface surf Standard fullforwardshadows
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
@@ -36,8 +34,6 @@
     float _ColorFreq;
     fixed4 _ColorEmmision;
     float _EmmisionAmount;
-    float _Amount;
-    float _Freq;
     float _Speed;
 
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
@@ -47,7 +43,8 @@
 		// put more per-instance properties here
 		UNITY_INSTANCING_BUFFER_END(Props)
 
-    // Cellular noise ("Worley noise") in 3D in GLSL.
+    /***************************************************************************************************/
+    // Cellular noise ("Worley noise") in 3D in GLSL. (Translated to HLSL by Malin Ejdbo 2019-01-20)
     // Copyright (c) Stefan Gustavson 2011-04-19. All rights reserved.
     // This code is released under the conditions of the MIT license.
     // See LICENSE file for details.
@@ -234,20 +231,12 @@
       return sqrt(d11.xy); // F1, F2
       #endif
     }
-
-    void vert(inout appdata_full v) {
-      if (_Amount > 0.001f && _Freq > 0.01f)
-      {
-        v.vertex.x += (_Amount * sin(_Freq * v.vertex.x * _Time.y * _Speed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.x * _Time.y * _Speed) + 0.25f * _Amount * sin(_Freq * 4.0f * v.vertex.x * _Time.y * _Speed));
-        v.vertex.y += (_Amount * sin(_Freq * v.vertex.y * _Time.y * _Speed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.y * _Time.y * _Speed) + 0.25f * _Amount * sin(_Freq * 4.0f * v.vertex.x * _Time.y * _Speed));
-        v.vertex.z += (_Amount * sin(_Freq * v.vertex.z * _Time.y * _Speed) + 0.5f * _Amount * sin(_Freq * 2.0f * v.vertex.z * _Time.y * _Speed) + 0.25f * _Amount * sin(_Freq * 4.0f * v.vertex.x * _Time.y * _Speed));
-      }
-    }
-
-		void surf (Input IN, inout SurfaceOutput o) { 
-      fixed4 c =_Color1;
+    /***********************************************************************/
+   
+		void surf (Input IN, inout SurfaceOutputStandard o) {
+      fixed4 c = _Color1;
       float2 F = _ColorAmount * cellular(_ColorFreq*float3(IN.uv_MainTex.x, IN.uv_MainTex.y, _Time.y * _Speed)) + _ColorAmount * 0.5f * cellular(_ColorFreq*2.0f*float3(IN.uv_MainTex.x, IN.uv_MainTex.y, _Time.y * _Speed));
-      c.rgb = lerp(c.rgb, _Color2, _Color1Ratio * (F.y - F.x) );
+      c.rgb = lerp(c.rgb, _Color2, _Color1Ratio * (F.y + F.x) );
 			o.Albedo = c.rgb;
       o.Emission = _ColorEmmision * _EmmisionAmount;
 		}
